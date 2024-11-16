@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 50px auto;
     padding: 20px;
     background: #fff;
@@ -22,17 +22,9 @@ h1 {
     color: #444;
 }
 
-label {
-    display: block;
-    margin: 10px 0 5px;
-    font-weight: bold;
-}
-
-input[type="text"], input[type="date"] {
+input[type="file"] {
     padding: 10px;
-    width: calc(100% - 20px);
-    max-width: 400px;
-    margin: 5px 0 20px;
+    margin: 10px 0 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -51,6 +43,10 @@ button:hover {
     background-color: #0056b3;
 }
 
-canvas {
+#charts-container {
     margin-top: 30px;
+}
+
+canvas {
+    margin: 20px 0;
 }
