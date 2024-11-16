@@ -10,17 +10,14 @@
 <body>
     <div class="container">
         <h1>Event Forecasting Tool</h1>
-        <p>Upload a CSV file with event data to forecast email volumes and staffing needs.</p>
+        <p>Upload a CSV file to forecast email volumes and staffing needs for multiple events.</p>
 
         <!-- File Upload -->
-        <label for="file-upload">Upload CSV File:</label>
-        <input type="file" id="file-upload" accept=".csv" />
+        <input type="file" id="upload-file" accept=".csv" />
+        <button onclick="processFile()">Upload and Generate Forecasts</button>
 
-        <!-- Forecast Button -->
-        <button onclick="processCSV()">Generate Forecasts</button>
-
-        <!-- Chart Containers -->
-        <div id="charts-container"></div>
+        <!-- Result Section -->
+        <div id="results"></div>
     </div>
 
     <script src="script.js"></script>
