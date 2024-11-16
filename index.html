@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Forecasting Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Email & Staffing Forecast Tool</h1>
+        <p>Input daily sign-up and email data to forecast email volumes and staffing needs.</p>
+
+        <!-- Input Fields -->
+        <div id="input-section">
+            <label for="event-name">Event Name:</label>
+            <input type="text" id="event-name" placeholder="e.g., Marathon" required>
+            
+            <label for="event-date">Event Date:</label>
+            <input type="date" id="event-date" required>
+            
+            <label for="daily-signups">Daily Event Sign-ups (Comma Separated):</label>
+            <input type="text" id="daily-signups" placeholder="e.g., 5,10,15" required>
+            
+            <label for="daily-emails">Daily Email Volume (Comma Separated):</label>
+            <input type="text" id="daily-emails" placeholder="e.g., 50,60,70" required>
+        </div>
+
+        <!-- Forecast Button -->
+        <button onclick="generateForecast()">Generate Forecast</button>
+
+        <!-- Chart Containers -->
+        <div>
+            <canvas id="forecastChart"></canvas>
+        </div>
+        <div>
+            <canvas id="staffingChart"></canvas>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
