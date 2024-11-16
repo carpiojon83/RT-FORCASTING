@@ -18,15 +18,15 @@ function processFile() {
 
 function parseCSV(content) {
     const rows = content.split("\n").map(row => row.split(","));
-    const headers = rows[0];
+    const headers = rows[0].map(header => header.trim());
     const data = rows.slice(1).map(row => {
         const entry = {};
         headers.forEach((header, index) => {
-            entry[header.trim()] = row[index] ? row[index].trim() : null;
+            entry[header] = row[index] ? row[index].trim() : null;
         });
         return entry;
     });
-    return data.filter(row => row["Event Name"]); // Remove empty rows
+    return data.filter(row => row["EVENT NAME"]); // Filter out empty rows
 }
 
 function generateForecasts(eventsData) {
@@ -34,53 +34,42 @@ function generateForecasts(eventsData) {
     resultsContainer.innerHTML = "";
 
     eventsData.forEach(event => {
-        const eventName = event["Event Name"];
-        const eventDate = new Date(event["Event Date"]);
-        const dailySignups = event["Daily Sign-ups"].split(",").map(Number);
-        const dailyEmails = event["Daily Email Volume"].split(",").map(Number);
+        const eventDate = event["EVENT DATE"];
+        const eventName = event["EVENT NAME"];
+        const estimatedSignUps = parseInt(event["ESTIMATED SIGN UP"]);
+        const currentSignUps = parseInt(event["CURRENT NUMBER OF SIGN UPS"]);
 
         // Validate data
-        if (!eventName || isNaN(eventDate) || dailySignups.length !== dailyEmails.length) {
+        if (!eventDate || !eventName || isNaN(estimatedSignUps) || isNaN(currentSignUps)) {
             resultsContainer.innerHTML += `<p>Invalid data for event: ${eventName}</p>`;
             return;
         }
 
         // Forecast data
-        const { forecastedEmails, staffNeeded, labels } = calculateForecast(
-            eventDate,
-            dailySignups,
-            dailyEmails
+        const forecastedEmails = [];
+        const staffNeeded = [];
+        const labels = [];
+        const emailsPerSignUp = 0.1; // Assume 10% of sign-ups lead to emails
+        const emailsPerStaff = 50; // One staff member handles 50 emails/day
+        const daysUntilEvent = Math.ceil(
+            (new Date(eventDate) - new Date()) / (1000 * 60 * 60 * 24)
         );
 
+        for (let i = 0; i < daysUntilEvent; i++) {
+            const dailyEmails = Math.round((currentSignUps + i * (estimatedSignUps - currentSignUps) / daysUntilEvent) * emailsPerSignUp);
+            forecastedEmails.push(dailyEmails);
+            staffNeeded.push(Math.ceil(dailyEmails / emailsPerStaff));
+
+            const forecastDate = new Date();
+            forecastDate.setDate(forecastDate.getDate() + i);
+            labels.push(forecastDate.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }));
+        }
+
         // Add charts
-        resultsContainer.innerHTML += `<h2>${eventName}</h2>`;
+        resultsContainer.innerHTML += `<h2>${eventName} (${eventDate})</h2>`;
         resultsContainer.innerHTML += `<canvas id="chart-${eventName.replace(/\s+/g, "-")}"></canvas>`;
         renderChart(`chart-${eventName.replace(/\s+/g, "-")}`, labels, forecastedEmails, staffNeeded);
     });
-}
-
-function calculateForecast(eventDate, dailySignups, dailyEmails) {
-    const forecastedEmails = [];
-    const staffNeeded = [];
-    const labels = [];
-    const growthRate = 1.05;
-    const emailsPerStaff = 50;
-
-    let currentEmails = dailyEmails[dailyEmails.length - 1];
-    let daysUntilEvent = Math.ceil((eventDate - new Date()) / (1000 * 60 * 60 * 24));
-
-    for (let i = 0; i < daysUntilEvent; i++) {
-        const signupGrowth = dailySignups[Math.min(i, dailySignups.length - 1)] * growthRate;
-        currentEmails += signupGrowth;
-        forecastedEmails.push(Math.round(currentEmails));
-        staffNeeded.push(Math.ceil(currentEmails / emailsPerStaff));
-
-        const forecastDate = new Date();
-        forecastDate.setDate(forecastDate.getDate() + i);
-        labels.push(forecastDate.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }));
-    }
-
-    return { forecastedEmails, staffNeeded, labels };
 }
 
 function renderChart(chartId, labels, forecastedEmails, staffNeeded) {
