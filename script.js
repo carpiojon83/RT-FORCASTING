@@ -10,25 +10,18 @@ function processFile() {
     const reader = new FileReader();
     reader.onload = function (e) {
         const content = e.target.result;
-        console.log("CSV Content Loaded:", content); // Debug log for file content
         const data = parseCSV(content);
         if (data.length === 0) {
             alert("No valid data found in the CSV file.");
             return;
         }
-        console.log("Parsed Data:", data); // Debug log for parsed data
         generateForecasts(data);
     };
     reader.readAsText(file);
 }
 
 function parseCSV(content) {
-    const rows = content.split("\n").map(row => row.split(","));
-    if (rows.length < 2) {
-        alert("CSV file is empty or improperly formatted.");
-        return [];
-    }
-
+    const rows = content.trim().split("\n").map(row => row.split(","));
     const headers = rows[0].map(header => header.trim());
     const data = rows.slice(1).map(row => {
         const entry = {};
@@ -38,8 +31,7 @@ function parseCSV(content) {
         return entry;
     });
 
-    console.log("Parsed Rows:", data); // Debug log for rows
-    return data.filter(row => row["EVENT NAME"]); // Remove empty rows
+    return data.filter(row => row["EVENT NAME"]); // Filter out empty rows
 }
 
 function generateForecasts(eventsData) {
@@ -54,15 +46,14 @@ function generateForecasts(eventsData) {
 
         if (!eventDate || !eventName || isNaN(estimatedSignUps) || isNaN(currentSignUps)) {
             resultsContainer.innerHTML += `<p>Invalid data for event: ${eventName}</p>`;
-            console.error("Invalid data for event:", event);
             return;
         }
 
         const forecastedEmails = [];
         const staffNeeded = [];
         const labels = [];
-        const emailsPerSignUp = 0.1; // Assume 10% of sign-ups lead to emails
-        const emailsPerStaff = 50; // One staff member handles 50 emails/day
+        const emailsPerSignUp = 0.1; // 10% of sign-ups lead to emails
+        const emailsPerStaff = 50; // Staff SLA: One person handles 50 emails/day
         const daysUntilEvent = Math.ceil(
             (new Date(eventDate) - new Date()) / (1000 * 60 * 60 * 24)
         );
