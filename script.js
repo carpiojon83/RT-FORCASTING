@@ -10,7 +10,13 @@ function processFile() {
     const reader = new FileReader();
     reader.onload = function (e) {
         const content = e.target.result;
+        console.log("CSV Content Loaded:", content); // Debug log for file content
         const data = parseCSV(content);
+        if (data.length === 0) {
+            alert("No valid data found in the CSV file.");
+            return;
+        }
+        console.log("Parsed Data:", data); // Debug log for parsed data
         generateForecasts(data);
     };
     reader.readAsText(file);
@@ -18,6 +24,11 @@ function processFile() {
 
 function parseCSV(content) {
     const rows = content.split("\n").map(row => row.split(","));
+    if (rows.length < 2) {
+        alert("CSV file is empty or improperly formatted.");
+        return [];
+    }
+
     const headers = rows[0].map(header => header.trim());
     const data = rows.slice(1).map(row => {
         const entry = {};
@@ -26,7 +37,9 @@ function parseCSV(content) {
         });
         return entry;
     });
-    return data.filter(row => row["EVENT NAME"]); // Filter out empty rows
+
+    console.log("Parsed Rows:", data); // Debug log for rows
+    return data.filter(row => row["EVENT NAME"]); // Remove empty rows
 }
 
 function generateForecasts(eventsData) {
@@ -39,13 +52,12 @@ function generateForecasts(eventsData) {
         const estimatedSignUps = parseInt(event["ESTIMATED SIGN UP"]);
         const currentSignUps = parseInt(event["CURRENT NUMBER OF SIGN UPS"]);
 
-        // Validate data
         if (!eventDate || !eventName || isNaN(estimatedSignUps) || isNaN(currentSignUps)) {
             resultsContainer.innerHTML += `<p>Invalid data for event: ${eventName}</p>`;
+            console.error("Invalid data for event:", event);
             return;
         }
 
-        // Forecast data
         const forecastedEmails = [];
         const staffNeeded = [];
         const labels = [];
@@ -65,7 +77,6 @@ function generateForecasts(eventsData) {
             labels.push(forecastDate.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }));
         }
 
-        // Add charts
         resultsContainer.innerHTML += `<h2>${eventName} (${eventDate})</h2>`;
         resultsContainer.innerHTML += `<canvas id="chart-${eventName.replace(/\s+/g, "-")}"></canvas>`;
         renderChart(`chart-${eventName.replace(/\s+/g, "-")}`, labels, forecastedEmails, staffNeeded);
