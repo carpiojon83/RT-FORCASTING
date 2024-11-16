@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 800px;
     margin: 50px auto;
     padding: 20px;
     background: #fff;
@@ -24,9 +24,7 @@ h1 {
 
 input[type="file"] {
     padding: 10px;
-    margin: 10px 0 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin: 20px 0;
 }
 
 button {
@@ -36,17 +34,13 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 20px;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-#charts-container {
+#results {
     margin-top: 30px;
-}
-
-canvas {
-    margin: 20px 0;
+    text-align: left;
 }
