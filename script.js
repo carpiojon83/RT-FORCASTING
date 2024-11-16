@@ -31,7 +31,7 @@ function parseCSV(content) {
         return entry;
     });
 
-    return data.filter(row => row["EVENT NAME"]); // Filter out empty rows
+    return data.filter(row => row["EVENT NAME"]); // Remove empty rows
 }
 
 function generateForecasts(eventsData) {
@@ -59,7 +59,7 @@ function generateForecasts(eventsData) {
         );
 
         for (let i = 0; i < daysUntilEvent; i++) {
-            const dailyEmails = Math.round((currentSignUps + i * (estimatedSignUps - currentSignUps) / daysUntilEvent) * emailsPerSignUp);
+            const dailyEmails = Math.round((currentSignUps + (i * (estimatedSignUps - currentSignUps) / daysUntilEvent)) * emailsPerSignUp);
             forecastedEmails.push(dailyEmails);
             staffNeeded.push(Math.ceil(dailyEmails / emailsPerStaff));
 
